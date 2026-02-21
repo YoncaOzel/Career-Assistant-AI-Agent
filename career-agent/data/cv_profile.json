@@ -1,0 +1,32 @@
+{
+  "name": "Adın Soyadın",
+  "title": "Backend Developer",
+  "experience_years": 2,
+  "skills": ["Python", "FastAPI", "PostgreSQL", "Docker", "Git", "REST API", "SQLAlchemy", "Redis"],
+  "education": "Bilgisayar Mühendisliği, XYZ Üniversitesi, 2024",
+  "languages": ["Türkçe (anadil)", "İngilizce (B2)"],
+  "preferred_stack": "Python backend, REST API, cloud deployment",
+  "available_for_work": true,
+  "preferred_salary_range": "belirtilmedi",
+  "willing_to_relocate": false,
+  "remote_ok": true,
+  "linkedin": "linkedin.com/in/username",
+  "github": "github.com/username",
+  "email": "email@example.com",
+  "expertise_domains": [
+    "REST API development",
+    "Database design",
+    "Python scripting",
+    "Docker containerization",
+    "FastAPI microservices",
+    "PostgreSQL optimization"
+  ],
+  "non_expertise_domains": [
+    "Mobile development",
+    "Blockchain",
+    "Hardware programming",
+    "Salary negotiation details",
+    "Legal contract terms",
+    "Equity and stock options"
+  ]
+}

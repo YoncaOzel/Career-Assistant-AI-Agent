@@ -1,0 +1,18 @@
+# Environment variables — API anahtarları burada, kesinlikle commit etme!
+.env
+
+# Python virtual environment
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+.Python
+
+# IDE
+.vscode/
+.idea/
+
+# Logs (opsiyonel — saklayabilirsin)
+# data/logs.json
+data/conversations/
