@@ -10,10 +10,10 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def detect_unknown(employer_message: str) -> dict:
     """
-    Mesajın insan müdahalesi gerektirip gerektirmediğini tespit eder.
+    Determines whether a message requires human intervention.
 
     Args:
-        employer_message: İşverenin gönderdiği mesaj
+        employer_message: The employer's incoming message
 
     Returns:
         dict: {
@@ -23,30 +23,30 @@ def detect_unknown(employer_message: str) -> dict:
             "category": str             # salary_negotiation | out_of_domain | legal | ambiguous | none
         }
     """
-    # RAG: CV'nin genel özetini çek (skills, domains, deneyim)
+    # RAG: Retrieve full CV summary (skills, domains, experience)
     cv_summary = retrieve_full_cv_summary()
 
     detection_prompt = f"""
-Bir kariyer asistanı olarak şu mesajı analiz et.
+You are a career assistant. Analyze the following message.
 
-## CV Özeti (PDF'den Çekildi):
+## CV Summary (Retrieved from PDF):
 {cv_summary}
 
-## İşveren Mesajı:
+## Employer Message:
 {employer_message}
 
-## Görev:
-Bu mesaj aşağıdaki durumlardan birini içeriyor mu?
-- Maaş rakamı müzakeresi (rakam verilmesi, pazarlık yapılması isteniyor)
-- Profildeki beceriler dışında derin teknik soru (bilinmeyen teknoloji)
-- Hukuki veya sözleşme detayları (non-compete, equity, hukuki maddeler)
-- Belirsiz veya manipülatif teklif (şüpheli, yetersiz bilgi içeren)
+## Task:
+Does this message contain any of the following situations?
+- Salary negotiation (asking for specific numbers, bargaining)
+- Deep technical question outside the profile's skills (unknown technology)
+- Legal or contract details (non-compete, equity, legal clauses)
+- Vague or manipulative offer (suspicious, insufficient information)
 
-Sadece JSON döndür, başka hiçbir şey yazma:
+Return only JSON, nothing else:
 {{
     "requires_human": true,
     "confidence_score": 0.0,
-    "reason": "neden insan gerekli veya değil",
+    "reason": "why human is required or not",
     "category": "salary_negotiation | out_of_domain | legal | ambiguous | none"
 }}
 """
@@ -60,7 +60,7 @@ Sadece JSON döndür, başka hiçbir şey yazma:
 
     result = json.loads(response.choices[0].message.content)
 
-    # Tip güvencesi: gerekli field'ların var olduğundan emin ol
+    # Type safety: ensure required fields exist
     return {
         "requires_human": bool(result.get("requires_human", False)),
         "confidence_score": float(result.get("confidence_score", 0.0)),

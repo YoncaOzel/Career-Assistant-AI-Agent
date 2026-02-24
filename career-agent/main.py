@@ -26,10 +26,10 @@ from rag.pdf_loader import get_vector_store
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Uygulama başlarken CV'yi indexler, dururken temizlik yapar."""
-    print("🚀 Career Agent başlatılıyor...")
-    get_vector_store()  # İlk çalıştırmada PDF okur, sonrakilerde cache'den yükler
-    print("✅ CV başarıyla indexlendi, sistem hazır.")
+    """Indexes the CV on startup and cleans up on shutdown."""
+    print("🚀 Career Agent starting...")
+    get_vector_store()  # First run reads the PDF; subsequent runs load from cache
+    print("✅ CV indexed successfully, system ready.")
     yield
 
 # ---------------------------------------------------------------------------
@@ -38,12 +38,12 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Career Assistant AI Agent",
-    description="İşveren mesajlarına otomatik profesyonel yanıt üretir.",
+    description="Automatically generates professional replies to employer messages.",
     version="1.1",
     lifespan=lifespan,
 )
 
-# Static dosyaları sun (templates/ klasörü)
+# Serve static files (templates/ directory)
 _templates_dir = os.path.join(os.path.dirname(__file__), "templates")
 app.mount("/static", StaticFiles(directory=_templates_dir), name="static")
 
@@ -57,9 +57,9 @@ app.add_middleware(
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    """Tüm yakalanmamış hataları loglar ve detaylı 500 döner."""
+    """Logs all unhandled exceptions and returns a detailed 500 response."""
     tb = traceback.format_exc()
-    print(f"\n❌ HATA — {request.method} {request.url}\n{tb}", flush=True)
+    print(f"\n❌ ERROR — {request.method} {request.url}\n{tb}", flush=True)
     return JSONResponse(
         status_code=500,
         content={"detail": str(exc), "traceback": tb},
@@ -75,15 +75,23 @@ class EmployerMessage(BaseModel):
     message: str
 
 
+class HumanResponse(BaseModel):
+    sender_name: str
+    message: str
+    human_reply: str
+    category: str = ""
+    reason: str = ""
+
+
 # ---------------------------------------------------------------------------
-# Yardımcı fonksiyonlar
+# Helper functions
 # ---------------------------------------------------------------------------
 
 LOGS_PATH = os.path.join(os.path.dirname(__file__), "data", "logs.json")
 
 
 def log_interaction(data: dict) -> None:
-    """Tüm etkileşimleri data/logs.json dosyasına kaydeder."""
+    """Saves all interactions to data/logs.json."""
     try:
         with open(LOGS_PATH, "r", encoding="utf-8") as f:
             logs = json.load(f)
@@ -105,24 +113,24 @@ def log_interaction(data: dict) -> None:
 @app.post("/process-message")
 async def process_message(payload: EmployerMessage):
     """
-    Ana endpoint — tam agent pipeline'ını çalıştırır.
+    Main endpoint — runs the full agent pipeline.
 
     Pipeline:
-        1. Telegram: yeni mesaj bildirimi
-        2. Unknown Detector: insan müdahalesi gerekiyor mu?
-        3. Career Agent: yanıt üret
-        4. Evaluator Agent: yanıtı puanla (max 3 deneme)
-        5. Telegram: sonuç bildirimi
-        6. Log: etkileşimi kaydet
+        1. Telegram: new message notification
+        2. Unknown Detector: is human intervention required?
+        3. Career Agent: generate reply
+        4. Evaluator Agent: score the reply (max 3 attempts)
+        5. Telegram: result notification
+        6. Log: save the interaction
     """
 
     # ------------------------------------------------------------------
-    # 1. Yeni mesaj bildirimi
+    # 1. New message notification
     # ------------------------------------------------------------------
     notify_new_message(payload.sender_name, payload.message)
 
     # ------------------------------------------------------------------
-    # 2. Unknown Detection — eğer yüksek güvenle insan gerekiyorsa dur
+    # 2. Unknown Detection — stop if high-confidence human required
     # ------------------------------------------------------------------
     detection = detect_unknown(payload.message)
 
@@ -143,7 +151,7 @@ async def process_message(payload: EmployerMessage):
         }
 
     # ------------------------------------------------------------------
-    # 3. Career Agent — ilk yanıtı üret
+    # 3. Career Agent — generate initial reply
     # ------------------------------------------------------------------
     agent_result = generate_response(payload.message)
     final_response = agent_result["response"]
@@ -151,7 +159,7 @@ async def process_message(payload: EmployerMessage):
     attempt = 0
 
     # ------------------------------------------------------------------
-    # 4. Evaluator Agent — max 3 deneme
+    # 4. Evaluator Agent — max 3 attempts
     # ------------------------------------------------------------------
     max_retries = 3
 
@@ -159,23 +167,23 @@ async def process_message(payload: EmployerMessage):
         evaluation = evaluate_response(payload.message, final_response)
 
         if evaluation["approved"]:
-            break  # Yeterince iyi — döngüden çık
+            break  # Good enough — exit loop
 
         if attempt < max_retries - 1:
-            # Puan düşük → bildirim gönder, ardından yeniden yaz
+            # Low score → send notification, then rewrite
             notify_retry(attempt + 1, evaluation["total_score"])
 
             improvement_prompt = (
                 f"{payload.message}\n\n"
-                f"[ÖNCEKİ YANIT YETERSİZ BULUNDU]\n"
-                f"Değerlendirici geri bildirimi: {evaluation['suggestions']}\n"
-                f"Lütfen bu geri bildirimi dikkate alarak daha iyi bir yanıt yaz."
+                f"[PREVIOUS REPLY WAS INSUFFICIENT]\n"
+                f"Evaluator feedback: {evaluation['suggestions']}\n"
+                f"Please write a better reply taking this feedback into account."
             )
             agent_result = generate_response(improvement_prompt)
             final_response = agent_result["response"]
 
     # ------------------------------------------------------------------
-    # 5. Sonuç bildirim
+    # 5. Result notification
     # ------------------------------------------------------------------
     notify_response_sent(evaluation["total_score"])
 
@@ -208,9 +216,33 @@ async def process_message(payload: EmployerMessage):
     }
 
 
+@app.post("/submit-human-response")
+async def submit_human_response(payload: HumanResponse):
+    """
+    Human types their own reply after intervention was required.
+    Logs the interaction and returns the submitted response.
+    """
+    log_interaction(
+        {
+            "sender": payload.sender_name,
+            "message": payload.message,
+            "final_response": payload.human_reply,
+            "action": "human_response_submitted",
+            "category": payload.category,
+            "reason": payload.reason,
+        }
+    )
+    return {
+        "status": "sent",
+        "response": payload.human_reply,
+        "message_type": "human_response",
+        "submitted_by": "human",
+    }
+
+
 @app.get("/logs")
 async def get_logs():
-    """Tüm etkileşim loglarını döndürür."""
+    """Returns all interaction logs."""
     try:
         with open(LOGS_PATH, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -220,33 +252,33 @@ async def get_logs():
 
 @app.delete("/logs")
 async def clear_logs():
-    """Log dosyasını temizler."""
+    """Clears the log file."""
     with open(LOGS_PATH, "w", encoding="utf-8") as f:
         json.dump([], f)
-    return {"status": "ok", "message": "Loglar temizlendi."}
+    return {"status": "ok", "message": "Logs cleared."}
 
 
 @app.get("/health")
 async def health():
-    """Sunucu sağlık kontrolü."""
+    """Server health check."""
     return {"status": "ok", "agent": "Career Assistant v1.1"}
 
 
 @app.get("/dashboard")
 async def dashboard():
-    """Confidence scoring dashboard'unu açar."""
+    """Serves the confidence scoring dashboard."""
     dashboard_path = os.path.join(os.path.dirname(__file__), "templates", "dashboard.html")
     return FileResponse(dashboard_path)
 
 
 # ---------------------------------------------------------------------------
-# Basit HTML demo arayüzü
+# Main HTML UI
 # ---------------------------------------------------------------------------
 
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
-    """Demo arayüzünü döndürür."""
+    """Serves the main UI."""
     template_path = os.path.join(os.path.dirname(__file__), "templates", "index.html")
     try:
         with open(template_path, "r", encoding="utf-8") as f:

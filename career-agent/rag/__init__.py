@@ -1,2 +1,2 @@
-# RAG (Retrieval-Augmented Generation) modülü
-# PDF CV'den bilgi çekme ve vektör arama işlemleri
+# RAG (Retrieval-Augmented Generation) module
+# CV extraction from PDF and vector search operations

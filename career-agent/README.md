@@ -1,66 +1,66 @@
 # 🤖 Career Assistant AI Agent
 
-İşveren e-postalarına **PDF CV'den bilgi çekerek** otomatik, profesyonel yanıtlar üreten; yanıtları puanlayarak kaliteyi garanti altına alan AI ajan sistemi.
+An AI agent system that automatically generates professional replies to employer emails by retrieving information from a PDF CV, scoring each reply to guarantee quality.
 
 ---
 
-## 📋 Özellikler
+## 📋 Features
 
-### v1.0 — Temel Sistem
-- **Career Agent** — GPT-4o-mini ile profesyonel e-posta yanıtı üretir
-- **Evaluator Agent** — 5 kriter × 0-2 puan (toplam 10) üzerinden yanıt kalitesini ölçer; puan ≥ 7 olana kadar max 3 kez yeniden yazar
-- **Unknown Detector** — Maaş müzakeresi, bilinmeyen teknoloji, hukuki detay veya şüpheli teklifleri tespit ederek insan yönlendirmesi yapar
-- **Telegram Bildirimleri** — Her aşamada (yeni mesaj, yanıt gönderildi, retry, insan müdahalesi) anlık bildirim
+### v1.0 — Core System
+- **Career Agent** — Generates professional email replies using GPT-4o-mini
+- **Evaluator Agent** — Scores replies across 5 criteria × 0-2 points (total 10); rewrites up to 3 times until score ≥ 7
+- **Unknown Detector** — Detects salary negotiation, unknown technology, legal details, or suspicious offers and routes to human intervention
+- **Telegram Notifications** — Instant notifications at every stage (new message, reply sent, retry, human intervention)
 
 ### v1.1 — RAG + Confidence Dashboard
-- **RAG Entegrasyonu** — `data/cv.pdf` PDF olarak yüklenir; LangChain + FAISS ile vektörize edilir; her yanıtta mesaja özel CV bölümleri semantik olarak çekilir
-- **Confidence Scoring Dashboard** — Puan geçmişi, mesaj tipi dağılımı ve kriter barlarını gösteren gerçek zamanlı web arayüzü (Chart.js, otomatik 30 sn yenileme)
+- **RAG Integration** — `data/cv.pdf` is loaded as a PDF; vectorized with LangChain + FAISS; message-specific CV sections are semantically retrieved for each reply
+- **Confidence Scoring Dashboard** — Real-time web UI showing score history, message type distribution, and criteria bars (Chart.js, auto-refreshes every 30 s)
 
 ---
 
-## 🗂 Klasör Yapısı
+## 🗂 Folder Structure
 
 ```
 career-agent/
-├── main.py                      # FastAPI uygulaması, tüm endpoint'ler
+├── main.py                      # FastAPI application, all endpoints
 ├── requirements.txt
-├── .env                         # API anahtarları (git'e ekleme!)
+├── .env                         # API keys (do NOT commit to git!)
 │
 ├── agents/
-│   ├── career_agent.py          # RAG destekli yanıt üretici
-│   └── evaluator_agent.py       # 5 kriterli kalite değerlendirici
+│   ├── career_agent.py          # RAG-powered reply generator
+│   └── evaluator_agent.py       # 5-criteria quality evaluator
 │
 ├── rag/
 │   ├── __init__.py
-│   ├── pdf_loader.py            # PDF → chunk → FAISS vektör deposu
-│   └── retriever.py             # Semantik arama, CV özeti
+│   ├── pdf_loader.py            # PDF → chunk → FAISS vector store
+│   └── retriever.py             # Semantic search, CV summary
 │
 ├── tools/
-│   ├── notification.py          # Telegram bildirimleri
-│   └── unknown_detector.py      # İnsan müdahalesi tespiti (RAG destekli)
+│   ├── notification.py          # Telegram notifications
+│   └── unknown_detector.py      # Human intervention detection (RAG-powered)
 │
 ├── templates/
-│   ├── index.html               # Ana demo arayüzü
+│   ├── index.html               # Main UI
 │   └── dashboard.html           # Confidence scoring dashboard
 │
 └── data/
-    ├── cv.pdf                   # ← Kendi CV'ni buraya koy
-    ├── vector_store/            # Otomatik oluşturulur (FAISS index)
-    ├── cv_profile.json          # Referans (artık aktif kullanılmıyor)
-    └── logs.json                # Etkileşim logları
+    ├── cv.pdf                   # ← Place your CV here
+    ├── vector_store/            # Auto-generated (FAISS index)
+    ├── cv_profile.json          # Reference (no longer actively used)
+    └── logs.json                # Interaction logs
 ```
 
 ---
 
-## ⚙️ Kurulum
+## ⚙️ Setup
 
-### 1. Bağımlılıkları yükle
+### 1. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. `.env` dosyasını oluştur
+### 2. Create the `.env` file
 
 ```env
 OPENAI_API_KEY=sk-...
@@ -68,118 +68,118 @@ TELEGRAM_BOT_TOKEN=123456:ABC-...
 TELEGRAM_CHAT_ID=123456789
 ```
 
-### 3. CV'ni yerleştir
+### 3. Place your CV
 
 ```bash
-# Kendi PDF CV'ni bu konuma koy:
+# Put your PDF CV at this location:
 data/cv.pdf
 ```
 
 ---
 
-## 🚀 Başlatma
+## 🚀 Launch
 
 ```bash
 uvicorn main:app --reload --port 8000
 ```
 
-İlk başlatmada PDF okunup `data/vector_store/` oluşturulur:
+On first launch, the PDF is read and `data/vector_store/` is created:
 
 ```
-🚀 Career Agent başlatılıyor...
-📄 PDF okunuyor ve indexleniyor...
-   → 3 sayfa, 24 parça oluşturuldu
-✅ Vektör deposu kaydedildi: data/vector_store
-✅ CV başarıyla indexlendi, sistem hazır.
+🚀 Career Agent starting...
+📄 Reading and indexing PDF...
+   → 3 pages, 24 chunks created
+✅ Vector store saved: data/vector_store
+✅ CV indexed successfully, system ready.
 ```
 
-Sonraki başlatmalarda diskten yüklenir (`📄` mesajı görünmez).
+Subsequent launches load from disk (the `📄` message won't appear).
 
-| URL | Açıklama |
+| URL | Description |
 |-----|----------|
-| http://localhost:8000 | Ana demo arayüzü |
+| http://localhost:8000 | Main UI |
 | http://localhost:8000/dashboard | Confidence scoring dashboard |
-| http://localhost:8000/docs | Swagger API dokümantasyonu |
+| http://localhost:8000/docs | Swagger API docs |
 | http://localhost:8000/logs | Ham log verisi (JSON) |
 
 ---
 
-## 🔄 Sistem Akışı
+## 🔄 System Flow
 
 ```
-[İşveren Mesajı — POST /process-message]
+[Employer Message — POST /process-message]
               │
               ▼
   ┌─────────────────────┐
-  │  Telegram Bildirimi  │  ← "Yeni mesaj geldi"
+  │  Telegram Notification  │  ← "New message received"
   └─────────────────────┘
               │
               ▼
   ┌─────────────────────┐
-  │   Unknown Detector   │  ← RAG ile CV özetini çeker
+  │   Unknown Detector   │  ← Retrieves CV summary via RAG
   └─────────────────────┘
               │
     ┌─────────┴──────────┐
     │ confidence ≥ 0.8   │
-    │ ve insan gerekli?  │
+    │ and human needed?  │
     └─────────┬──────────┘
-         EVET │                   HAYIR
+         YES │                   NO
               ▼                     │
   ┌─────────────────────┐           │
-  │  İnsan Yönlendirme   │           │
+  │  Human Intervention  │           │
   │  (Telegram + log)    │           │
   └─────────────────────┘           │
                                     ▼
                         ┌─────────────────────┐
-                        │    RAG Retriever     │  ← Mesaja özel CV bölümleri
+                        │    RAG Retriever     │  ← Message-specific CV sections
                         └─────────────────────┘
                                     │
                                     ▼
                         ┌─────────────────────┐
-                        │    Career Agent      │  ← GPT-4o-mini + CV bağlamı
+                        │    Career Agent      │  ← GPT-4o-mini + CV context
                         └─────────────────────┘
                                     │
                               ┌─────▼─────┐
-                              │ Evaluator │  ← 5 kriter × 0-2 = /10
+                              │ Evaluator │  ← 5 criteria × 0-2 = /10
                               └─────┬─────┘
                                     │
                           ┌─────────┴──────────┐
-                          │    Puan ≥ 7?        │
+                          │    Score ≥ 7?        │
                           └─────────┬──────────┘
-                     EVET           │           HAYIR (max 3 deneme)
+                     YES           │           NO (max 3 attempts)
                        ◄────────────┘──────────────►
                        │                            │
                        ▼                            ▼
            ┌─────────────────────┐   ┌─────────────────────────┐
-           │  Yanıt Gönderildi   │   │  Career Agent yeniden   │
-           │  Telegram Bildirimi │   │  yazar (suggestions ile) │
+           │  Reply Sent          │   │  Career Agent rewrites  │
+           │  Telegram Notification│   │  (with suggestions)     │
            └─────────────────────┘   └─────────────────────────┘
                        │
                        ▼
            ┌─────────────────────┐
-           │  Log kaydedildi     │  → data/logs.json
+           │  Interaction logged  │  → data/logs.json
            └─────────────────────┘
                        │
                        ▼
            ┌─────────────────────┐
-           │  Dashboard güncellenir │  ← /dashboard otomatik yenilenir
+           │  Dashboard updated   │  ← /dashboard auto-refreshes
            └─────────────────────┘
 ```
 
 ---
 
-## 📡 API Endpoint'leri
+## 📡 API Endpoints
 
-| Method | Endpoint | Açıklama |
+| Method | Endpoint | Description |
 |--------|----------|----------|
-| `POST` | `/process-message` | Ana pipeline — işveren mesajını işler |
-| `GET`  | `/logs` | Tüm etkileşim loglarını döndürür |
-| `DELETE` | `/logs` | Log dosyasını temizler |
-| `GET`  | `/dashboard` | Confidence scoring arayüzü |
-| `GET`  | `/health` | Sunucu sağlık kontrolü |
+| `POST` | `/process-message` | Main pipeline — processes an employer message |
+| `GET`  | `/logs` | Returns all interaction logs |
+| `DELETE` | `/logs` | Clears the log file |
+| `GET`  | `/dashboard` | Confidence scoring UI |
+| `GET`  | `/health` | Server health check |
 | `GET`  | `/docs` | Swagger UI |
 
-### Örnek İstek
+### Example Request
 
 ```bash
 curl -X POST http://localhost:8000/process-message \
@@ -190,7 +190,7 @@ curl -X POST http://localhost:8000/process-message \
   }'
 ```
 
-### Örnek Yanıt
+### Example Response
 
 ```json
 {
@@ -215,9 +215,9 @@ curl -X POST http://localhost:8000/process-message \
 
 ---
 
-## 🔁 CV Güncelleme
+## 🔁 Updating the CV
 
-CV'ni değiştirdikten sonra eski vektör deposunu sil, sistem otomatik yeniden indexler:
+After replacing your CV, delete the old vector store and the system will re-index automatically:
 
 ```bash
 # Windows
@@ -226,20 +226,20 @@ Remove-Item -Recurse -Force data/vector_store
 # Linux / macOS
 rm -rf data/vector_store/
 
-# Yeniden başlat
+# Restart
 uvicorn main:app --reload --port 8000
 ```
 
 ---
 
-## 🛠 Teknoloji Yığını
+## 🛠 Technology Stack
 
-| Katman | Teknoloji |
-|--------|-----------|
+| Layer | Technology |
+|-------|------------|
 | API framework | FastAPI |
 | LLM | OpenAI GPT-4o-mini |
 | RAG pipeline | LangChain + FAISS |
 | Embedding | text-embedding-3-small |
-| PDF okuma | PyPDF |
-| Bildirim | Telegram Bot API |
+| PDF reading | PyPDF |
+| Notifications | Telegram Bot API |
 | Dashboard | Chart.js (CDN) |

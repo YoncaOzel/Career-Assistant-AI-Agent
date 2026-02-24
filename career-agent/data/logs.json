@@ -1,8 +1,8 @@
 [
   {
-    "sender": "Test",
-    "message": "Hello, we would like to invite you for an interview next week.",
-    "final_response": "Dear [Employer's Name],\n\nThank you for considering my application and inviting me for an interview. I am excited about the opportunity to discuss my experience and how I can contribute to your team as a Backend Developer.\n\nPlease let me know the available dates and times for the interview, and I will do my best to accommodate. I look forward to speaking with you soon.\n\nBest regards,\n\nAdın Soyadın  \nBackend Developer  \n[Your LinkedIn Profile or Contact Information]",
+    "sender": "TechTest HR",
+    "message": "what is your name",
+    "final_response": "Dear [Employer's Name],\n\nThank you for reaching out. My name is Zeynep Yonca Özel. If you have any further questions or need additional information, please feel free to ask.\n\nBest regards,\n\nZeynep Yonca Özel  \nPhone: +90 545 320 13 52  \nEmail: ozelzeynepyonca@gmail.com  \nLinkedIn: www.linkedin.com/in/zeynep-yonca-özel-365456204",
     "evaluation": {
       "total_score": 10,
       "scores": {
@@ -12,197 +12,8 @@
         "safety": 2,
         "relevance": 2
       },
-      "feedback": "Yanıt, profesyonel bir dil kullanıyor, net ve anlaşılır. İşverenin davetine tam olarak yanıt veriyor ve güvenli bilgiler içeriyor. Ayrıca, yanıt işverenin mesajıyla doğrudan ilgili.",
+      "feedback": "Yanıt, işverenin sorusunu net bir şekilde yanıtlamakta ve profesyonel bir dil kullanmaktadır. Ayrıca, iletişim bilgileri ile birlikte ek bilgi sunarak tamamlayıcılığı artırmıştır.",
       "suggestions": "No changes needed",
-      "approved": true
-    },
-    "message_type": "interview_invite",
-    "attempts": 1,
-    "detection": {
-      "requires_human": false,
-      "confidence_score": 1.0,
-      "reason": "Mesaj sadece bir mülakat daveti içeriyor ve belirtilen durumlarla ilgili herhangi bir bilgi veya talep içermiyor.",
-      "category": "none"
-    },
-    "timestamp": "2026-02-21T18:07:03.379449"
-  },
-  {
-    "sender": "TestCorp HR",
-    "message": "Hello! We would like to invite you for a technical interview next week.",
-    "final_response": "Dear [Employer's Name],\n\nThank you for considering my application and inviting me for a technical interview. I am eager to discuss my experiences and skills further, particularly in Python backend development and REST API design, which align with your requirements.\n\nPlease let me know the specific date and time that works best for you, and I will do my best to accommodate it. I look forward to the opportunity to speak with you and explore how I can contribute to your team.\n\nBest regards,\n\nAdın Soyadın  \nBackend Developer  \n[Your Contact Information]",
-    "evaluation": {
-      "total_score": 10,
-      "scores": {
-        "professional_tone": 2,
-        "clarity": 2,
-        "completeness": 2,
-        "safety": 2,
-        "relevance": 2
-      },
-      "feedback": "Yanıt, profesyonel bir dil kullanıyor, anlaşılır ve tutarlı bir şekilde yazılmış. İşverenin davetine tam olarak yanıt veriyor ve ilgili bilgileri içeriyor.",
-      "suggestions": "No changes needed",
-      "approved": true
-    },
-    "message_type": "interview_invite",
-    "attempts": 1,
-    "detection": {
-      "requires_human": false,
-      "confidence_score": 1.0,
-      "reason": "Mesaj sadece bir teknik mülakat daveti içeriyor ve belirtilen durumlarla ilgili herhangi bir şey yok.",
-      "category": "none"
-    },
-    "timestamp": "2026-02-21T18:13:24.291725"
-  },
-  {
-    "sender": "TechCorp",
-    "message": "We would like to invite you for an interview next week.",
-    "final_response": "Dear [Employer's Name],\n\nThank you for considering my application and for the opportunity to interview for the Backend Developer position. I am excited to discuss my skills and experiences with you and see how I can contribute to your team.\n\nPlease let me know your available times for the interview next week, and I will do my best to accommodate.\n\nLooking forward to your reply.\n\nBest regards,\n\nAdın Soyadın  \nBackend Developer  \n[Your Contact Information]",
-    "evaluation": {
-      "total_score": 10,
-      "scores": {
-        "professional_tone": 2,
-        "clarity": 2,
-        "completeness": 2,
-        "safety": 2,
-        "relevance": 2
-      },
-      "feedback": "Yanıt, profesyonel bir dil kullanıyor, net ve anlaşılır bir şekilde yazılmış. İşverenin davetini yanıtlayarak gerekli bilgileri talep ediyor ve ilgili bir yanıt veriyor.",
-      "suggestions": "No changes needed",
-      "approved": true
-    },
-    "message_type": "interview_invite",
-    "attempts": 1,
-    "detection": {
-      "requires_human": false,
-      "confidence_score": 1.0,
-      "reason": "Mesaj sadece bir mülakat daveti içeriyor ve belirtilen durumlarla ilgili herhangi bir bilgi veya talep bulunmuyor.",
-      "category": "none"
-    },
-    "timestamp": "2026-02-21T18:17:25.260141"
-  },
-  {
-    "sender": "Test",
-    "message": "Hello, we would like to invite you for an interview.",
-    "final_response": "Dear [Employer's Name],\n\nThank you for considering my application and extending the invitation for an interview. I am excited about the opportunity to discuss my background as a Backend Developer and how my skills in Python, FastAPI, and REST API development can contribute to your team.\n\nPlease let me know the details regarding the date and time of the interview, as well as any specific format or platform you prefer to use. I look forward to speaking with you soon.\n\nBest regards,\n\nAdın Soyadın",
-    "evaluation": {
-      "total_score": 10,
-      "scores": {
-        "professional_tone": 2,
-        "clarity": 2,
-        "completeness": 2,
-        "safety": 2,
-        "relevance": 2
-      },
-      "feedback": "Yanıt, profesyonel bir tonla yazılmış, anlaşılır ve tutarlı bir şekilde işverenin davetini yanıtlıyor. Tüm gerekli bilgileri talep ediyor ve işverenle iletişim kurma isteğini belirtiyor.",
-      "suggestions": "No changes needed",
-      "approved": true
-    },
-    "message_type": "interview_invite",
-    "attempts": 1,
-    "detection": {
-      "requires_human": false,
-      "confidence_score": 1.0,
-      "reason": "Mesaj sadece bir mülakat daveti içeriyor ve belirtilen durumlarla ilgili herhangi bir bilgi veya talep bulunmuyor.",
-      "category": "none"
-    },
-    "timestamp": "2026-02-21T18:40:41.365467"
-  },
-  {
-    "sender": "Test",
-    "message": "Hello, we would like to invite you for an interview.",
-    "final_response": "Dear [Employer's Name],\n\nThank you for considering my application and for the invitation to interview. I am excited about the opportunity to discuss my background and how I can contribute to your team as a Backend Developer.\n\nPlease let me know your available times for the interview, and I will do my best to accommodate. I look forward to speaking with you soon.\n\nBest regards,\n\nAdın Soyadın",
-    "evaluation": {
-      "total_score": 10,
-      "scores": {
-        "professional_tone": 2,
-        "clarity": 2,
-        "completeness": 2,
-        "safety": 2,
-        "relevance": 2
-      },
-      "feedback": "Yanıt, profesyonel bir dil kullanıyor, net ve anlaşılır bir şekilde yazılmış. İşverenin davetine tam olarak yanıt veriyor ve güvenli bir içerik sunuyor.",
-      "suggestions": "No changes needed",
-      "approved": true
-    },
-    "message_type": "interview_invite",
-    "attempts": 1,
-    "detection": {
-      "requires_human": false,
-      "confidence_score": 1.0,
-      "reason": "Mesaj sadece bir mülakat daveti içeriyor ve belirtilen durumlarla ilgili herhangi bir bilgi veya talep bulunmuyor.",
-      "category": "none"
-    },
-    "timestamp": "2026-02-21T18:42:07.122703"
-  },
-  {
-    "sender": "yonca",
-    "message": "hello",
-    "final_response": "Hello,\n\nThank you for reaching out. I hope this message finds you well. If you have any specific inquiries or topics you would like to discuss, please feel free to share them. I'm here to help!\n\nBest regards,  \nAdın Soyadın  \nBackend Developer",
-    "evaluation": {
-      "total_score": 9,
-      "scores": {
-        "professional_tone": 2,
-        "clarity": 2,
-        "completeness": 1,
-        "safety": 2,
-        "relevance": 2
-      },
-      "feedback": "Yanıt profesyonel bir dil kullanıyor ve net bir şekilde ifade edilmiş. Ancak, işverenin mesajına doğrudan bir yanıt verilmediği için tam olarak tamamlanmamış.",
-      "suggestions": "İşverenin mesajına daha spesifik bir yanıt ekleyerek yanıtı tamamlayabilirsiniz.",
-      "approved": true
-    },
-    "message_type": "other",
-    "attempts": 1,
-    "detection": {
-      "requires_human": false,
-      "confidence_score": 1.0,
-      "reason": "Mesaj sadece selam içeriyor ve belirtilen durumlarla ilgili herhangi bir bilgi veya talep bulunmuyor.",
-      "category": "none"
-    },
-    "timestamp": "2026-02-21T18:44:24.544464"
-  },
-  {
-    "sender": "yonca",
-    "message": "selam naber",
-    "final_response": "Hello,\n\nThank you for reaching out! I'm doing well, and I hope you are too. How can I assist you today?\n\nBest regards,  \nAdın Soyadın",
-    "evaluation": {
-      "total_score": 9,
-      "scores": {
-        "professional_tone": 2,
-        "clarity": 2,
-        "completeness": 1,
-        "safety": 2,
-        "relevance": 2
-      },
-      "feedback": "Yanıt, profesyonel bir tonla yazılmış ve anlaşılır. Ancak, işverenin spesifik bir talebi olmadığı için yanıtın içeriği sınırlı kalmış.",
-      "suggestions": "İşverenin mesajına daha spesifik bir yanıt verilebilir veya ek bir soru sorulabilir.",
-      "approved": true
-    },
-    "message_type": "other",
-    "attempts": 1,
-    "detection": {
-      "requires_human": false,
-      "confidence_score": 0.0,
-      "reason": "Mesajda herhangi bir maaş müzakeresi, derin teknik soru, hukuki detay veya belirsiz teklif bulunmamaktadır.",
-      "category": "none"
-    },
-    "timestamp": "2026-02-21T18:44:48.679344"
-  },
-  {
-    "sender": "yonca",
-    "message": "ismin ne",
-    "final_response": "Thank you for your message. Unfortunately, I have limited information regarding personal details such as names. However, if you need assistance related to the job application or any other inquiries, please feel free to ask!",
-    "evaluation": {
-      "total_score": 9,
-      "scores": {
-        "professional_tone": 2,
-        "clarity": 2,
-        "completeness": 1,
-        "safety": 2,
-        "relevance": 2
-      },
-      "feedback": "Yanıt profesyonel ve kibar bir dille yazılmış, içerik anlaşılır. Ancak, işverenin ismini sorduğu soruya doğrudan bir yanıt verilmediği için tamamlayıcılık eksikliği var.",
-      "suggestions": "Yanıt, isminizi paylaşmamakla birlikte, işverenin sorusuna daha doğrudan bir yanıt vererek 'Benim ismim yok' veya 'Ben bir yapay zeka asistanıyım, bu yüzden ismim yok' gibi bir ifade eklenebilir.",
       "approved": true
     },
     "message_type": "clarification",
@@ -210,36 +21,78 @@
     "detection": {
       "requires_human": true,
       "confidence_score": 0.0,
-      "reason": "Mesajda belirli bir konu veya durum belirtilmemiş, sadece 'ismin ne' ifadesi var. Bu nedenle, daha fazla bilgiye ihtiyaç var.",
-      "category": "ambiguous"
+      "reason": "Mesaj, isim sorma dışında herhangi bir bilgi veya müzakere içermiyor.",
+      "category": "none"
     },
-    "timestamp": "2026-02-24T21:13:15.338317"
+    "timestamp": "2026-02-24T21:52:54.616849"
   },
   {
-    "sender": "birisi",
-    "message": "isminiz nedir?",
-    "final_response": "Dear [Employer's Name],\n\nThank you for your message. My name is Zeynep Yonca Özel. I am a Software Developer Intern and I have recently completed internships with various companies, developing skills in technologies such as JavaScript, HTML, React.js, and CSS.\n\nIf you need any more information or have further questions, please feel free to ask.\n\nBest regards,\n\nZeynep Yonca Özel  \nPhone: +90 545 320 13 52  \nEmail: ozelzeynepyonca@gmail.com  \nLinkedIn: www.linkedin.com/in/zeynep-yonca-özel-365456204",
+    "sender": "Techtest",
+    "message": "What are your salary expectations?",
+    "action": "human_intervention_requested",
+    "detection": {
+      "requires_human": true,
+      "confidence_score": 0.9,
+      "reason": "Maaş beklentileri hakkında bilgi isteniyor, bu da müzakere sürecine girmeyi gerektiriyor.",
+      "category": "salary_negotiation"
+    },
+    "timestamp": "2026-02-24T21:58:15.364511"
+  },
+  {
+    "sender": "Techtest",
+    "message": "What are your salary expectations?",
+    "final_response": "My salary expectation is twice the minimum wage.",
+    "action": "human_response_submitted",
+    "category": "salary_negotiation",
+    "reason": "Maaş beklentileri hakkında bilgi isteniyor, bu da müzakere sürecine girmeyi gerektiriyor.",
+    "timestamp": "2026-02-24T21:58:34.120242"
+  },
+  {
+    "sender": "TechTest",
+    "message": "react ile ilgili projelerin var mı",
+    "final_response": "Dear [Employer's Name],\n\nThank you for your inquiry about my experience with React. \n\nYes, I have worked on projects involving React. Notably, I contributed to the development of a flight ticket reservation and management platform named TicketWings. In this project, I utilized React.js along with RESTful API and CSS3 to create a backend-integrated web application. Additionally, during my internship at Softalya Software Inc., I gained substantial knowledge and experience in web technologies, specifically JavaScript, HTML, React.js, and CSS.\n\nIf you need any further details or specific examples, please let me know. I would be happy to provide more information.\n\nBest regards,\n\nZeynep Yonca ÖZEL  \nPhone: +90 545 320 13 52  \nEmail: ozelzeynepyonca@gmail.com  \nLinkedIn: www.linkedin.com/in/zeynep-yonca-özel-365456204",
     "evaluation": {
-      "total_score": 9,
+      "total_score": 10,
       "scores": {
         "professional_tone": 2,
         "clarity": 2,
-        "completeness": 1,
+        "completeness": 2,
         "safety": 2,
         "relevance": 2
       },
-      "feedback": "Yanıt, profesyonel bir dil kullanıyor ve oldukça net. Ancak, işverenin sadece ismini sorduğu için, yanıtın gereksiz detaylar içermesi nedeniyle tam olarak soruya odaklanmamış.",
-      "suggestions": "Yanıtı daha kısa tutarak sadece ismini vermek yeterli olurdu. Örneğin, 'Benim adım Zeynep Yonca Özel.' şeklinde bir yanıt yeterli olurdu.",
+      "feedback": "The response maintains a professional tone, is clear and coherent, fully addresses the employer's question about React projects, contains no false or harmful information, and is directly relevant to the inquiry.",
+      "suggestions": "No changes needed",
       "approved": true
     },
     "message_type": "clarification",
     "attempts": 1,
     "detection": {
-      "requires_human": true,
-      "confidence_score": 0.0,
-      "reason": "Mesajda sadece isminiz nedir? sorusu yer almakta, bu durum herhangi bir müzakere veya teknik detay içermemektedir.",
+      "requires_human": false,
+      "confidence_score": 0.9,
+      "reason": "The employer's message is a straightforward inquiry about the candidate's experience with React projects, which falls within the candidate's stated skills and experience.",
       "category": "none"
     },
-    "timestamp": "2026-02-24T21:16:26.364774"
+    "timestamp": "2026-02-24T22:43:33.331589"
+  },
+  {
+    "sender": "TechTest",
+    "message": "maaş hakkında beklentin ne",
+    "action": "human_intervention_requested",
+    "detection": {
+      "requires_human": true,
+      "confidence_score": 0.8,
+      "reason": "The employer is inquiring about salary expectations, which indicates a negotiation context that may require human judgment and discussion.",
+      "category": "salary_negotiation"
+    },
+    "timestamp": "2026-02-24T22:44:09.852786"
+  },
+  {
+    "sender": "TechTest",
+    "message": "maaş hakkında beklentin ne",
+    "final_response": "2 asgari ücret",
+    "action": "human_response_submitted",
+    "category": "salary_negotiation",
+    "reason": "The employer is inquiring about salary expectations, which indicates a negotiation context that may require human judgment and discussion.",
+    "timestamp": "2026-02-24T22:44:27.455387"
   }
 ]

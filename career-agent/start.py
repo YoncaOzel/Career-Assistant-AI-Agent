@@ -1,5 +1,5 @@
 """
-Projeyi başlatmak için bu dosyayı çalıştır:
+Run this file to start the project:
     python start.py
 """
 
@@ -15,7 +15,7 @@ PORT = 8080
 
 
 def is_port_ready(host: str, port: int) -> bool:
-    """Sunucunun port'u dinleyip dinlemediğini kontrol eder."""
+    """Checks whether the server is listening on the given port."""
     try:
         with socket.create_connection((host, port), timeout=1):
             return True
@@ -24,33 +24,33 @@ def is_port_ready(host: str, port: int) -> bool:
 
 
 def main():
-    print("🚀 Career Assistant AI Agent başlatılıyor...")
-    print(f"   http://localhost:{PORT}        → Demo arayüzü")
+    print("🚀 Career Assistant AI Agent starting...")
+    print(f"   http://localhost:{PORT}        → Main UI")
     print(f"   http://localhost:{PORT}/docs   → Swagger UI")
-    print("   Durdurmak için CTRL+C\n")
+    print("   Press CTRL+C to stop\n")
 
-    # Uvicorn sürecini başlat
+    # Start the Uvicorn process
     server = subprocess.Popen(
         [sys.executable, "-m", "uvicorn", "main:app",
          "--host", HOST, "--port", str(PORT), "--reload"],
         cwd=os.path.dirname(os.path.abspath(__file__)),
     )
 
-    # Sunucu hazır olana kadar bekle (max 15 saniye)
-    print("⏳ Sunucu hazırlanıyor", end="", flush=True)
+    # Wait until the server is ready (max 15 seconds)
+    print("⏳ Server starting", end="", flush=True)
     for _ in range(30):
         if is_port_ready(HOST, PORT):
             break
         time.sleep(0.5)
         print(".", end="", flush=True)
     else:
-        print("\n❌ Sunucu başlamadı. Hata için terminal çıktısını kontrol et.")
+        print("\n❌ Server failed to start. Check terminal output for errors.")
         server.terminate()
         sys.exit(1)
 
-    print("\n✅ Sunucu hazır!\n")
+    print("\n✅ Server ready!\n")
 
-    # Tarayıcıyı aç
+    # Open the browser
     webbrowser.open(f"http://localhost:{PORT}")
     time.sleep(0.5)
     webbrowser.open(f"http://localhost:{PORT}/docs")
@@ -59,7 +59,7 @@ def main():
     try:
         server.wait()
     except KeyboardInterrupt:
-        print("\n\n🛑 Sunucu kapatılıyor...")
+        print("\n\n🛑 Shutting down server...")
         server.terminate()
 
 

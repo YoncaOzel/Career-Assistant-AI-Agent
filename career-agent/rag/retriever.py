@@ -3,29 +3,29 @@ from rag.pdf_loader import get_vector_store
 
 def retrieve_cv_context(query: str, top_k: int = 3) -> str:
     """
-    Kullanıcının sorusuna en ilgili CV bölümlerini döndürür.
+    Returns the most relevant CV sections for the given query.
 
     Args:
-        query: İşverenin mesajı veya anahtar konu
-        top_k: Kaç parça getirileceği (3 genellikle yeterli)
+        query: The employer's message or a key topic
+        top_k: Number of chunks to retrieve (3 is usually sufficient)
 
     Returns:
-        str: Birleştirilmiş CV bölümleri (sayfa numarasıyla)
+        str: Concatenated CV sections (with page numbers)
     """
     vector_store = get_vector_store()
 
-    # Semantik arama — anlama dayalı, kelime eşleşmesi değil
+    # Semantic search — meaning-based, not keyword matching
     relevant_docs = vector_store.similarity_search(query, k=top_k)
 
     if not relevant_docs:
-        return "CV bilgisi bulunamadı."
+        return "No CV content found."
 
-    # Parçaları birleştir
+    # Concatenate chunks
     context_parts = []
     for i, doc in enumerate(relevant_docs, 1):
         page_num = doc.metadata.get("page", 0) + 1
         context_parts.append(
-            f"[CV Bölüm {i} — Sayfa {page_num}]\n{doc.page_content}"
+            f"[CV Section {i} — Page {page_num}]\n{doc.page_content}"
         )
 
     return "\n\n---\n\n".join(context_parts)
@@ -33,11 +33,11 @@ def retrieve_cv_context(query: str, top_k: int = 3) -> str:
 
 def retrieve_identity_context() -> str:
     """
-    Her zaman CV'deki kimlik bilgilerini çeker: isim, unvan, iletişim.
-    career_agent'ın her yanıtta kişiyi tanıması için kullanılır.
+    Always retrieves identity information from the CV: name, title, contact.
+    Used so the career_agent can identify the person in every reply.
 
     Returns:
-        str: Kimlik ve iletişim bilgisi içeren CV parçaları
+        str: CV chunks containing identity and contact information
     """
     identity_queries = [
         "name full name contact email phone",
@@ -55,16 +55,16 @@ def retrieve_identity_context() -> str:
     if not all_chunks:
         return ""
 
-    return "\n\n".join(list(all_chunks)[:4])  # Max 4 parça
+    return "\n\n".join(list(all_chunks)[:4])  # Max 4 chunks
 
 
 def retrieve_full_cv_summary() -> str:
     """
-    Tüm CV'yi değil, genel bir özet almak için geniş kapsamlı sorgu çalıştırır.
-    Evaluator agent ve Unknown Detector için kullanılır.
+    Runs broad queries to obtain a general CV summary (not the full CV).
+    Used by the Evaluator Agent and Unknown Detector.
 
     Returns:
-        str: CV'nin genel özetini oluşturan max 8 parça
+        str: Up to 8 chunks representing a general CV summary
     """
     broad_queries = [
         "skills experience education",
@@ -80,4 +80,4 @@ def retrieve_full_cv_summary() -> str:
         for doc in docs:
             all_chunks.add(doc.page_content)
 
-    return "\n\n".join(list(all_chunks)[:8])  # Max 8 parça
+    return "\n\n".join(list(all_chunks)[:8])  # Max 8 chunks
