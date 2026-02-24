@@ -1,9 +1,11 @@
 import json
 import datetime
 import traceback
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import os
 
@@ -16,6 +18,19 @@ from tools.notification import (
     notify_retry,
 )
 from tools.unknown_detector import detect_unknown
+from rag.pdf_loader import get_vector_store
+
+# ---------------------------------------------------------------------------
+# Lifespan — startup'ta CV'yi indexle
+# ---------------------------------------------------------------------------
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Uygulama başlarken CV'yi indexler, dururken temizlik yapar."""
+    print("🚀 Career Agent başlatılıyor...")
+    get_vector_store()  # İlk çalıştırmada PDF okur, sonrakilerde cache'den yükler
+    print("✅ CV başarıyla indexlendi, sistem hazır.")
+    yield
 
 # ---------------------------------------------------------------------------
 # FastAPI app
@@ -24,8 +39,13 @@ from tools.unknown_detector import detect_unknown
 app = FastAPI(
     title="Career Assistant AI Agent",
     description="İşveren mesajlarına otomatik profesyonel yanıt üretir.",
-    version="1.0",
+    version="1.1",
+    lifespan=lifespan,
 )
+
+# Static dosyaları sun (templates/ klasörü)
+_templates_dir = os.path.join(os.path.dirname(__file__), "templates")
+app.mount("/static", StaticFiles(directory=_templates_dir), name="static")
 
 app.add_middleware(
     CORSMiddleware,
@@ -209,7 +229,14 @@ async def clear_logs():
 @app.get("/health")
 async def health():
     """Sunucu sağlık kontrolü."""
-    return {"status": "ok", "agent": "Career Assistant v1.0"}
+    return {"status": "ok", "agent": "Career Assistant v1.1"}
+
+
+@app.get("/dashboard")
+async def dashboard():
+    """Confidence scoring dashboard'unu açar."""
+    dashboard_path = os.path.join(os.path.dirname(__file__), "templates", "dashboard.html")
+    return FileResponse(dashboard_path)
 
 
 # ---------------------------------------------------------------------------

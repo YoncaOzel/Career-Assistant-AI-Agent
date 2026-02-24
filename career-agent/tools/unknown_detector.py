@@ -2,16 +2,10 @@ import json
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
+from rag.retriever import retrieve_full_cv_summary
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-
-def load_cv() -> dict:
-    """CV profil verisini yükler."""
-    cv_path = os.path.join(os.path.dirname(__file__), "..", "data", "cv_profile.json")
-    with open(cv_path, "r", encoding="utf-8") as f:
-        return json.load(f)
 
 
 def detect_unknown(employer_message: str) -> dict:
@@ -29,19 +23,14 @@ def detect_unknown(employer_message: str) -> dict:
             "category": str             # salary_negotiation | out_of_domain | legal | ambiguous | none
         }
     """
-    cv = load_cv()
+    # RAG: CV'nin genel özetini çek (skills, domains, deneyim)
+    cv_summary = retrieve_full_cv_summary()
 
     detection_prompt = f"""
 Bir kariyer asistanı olarak şu mesajı analiz et.
 
-## Kullanıcı Profili - Bildiği Teknolojiler:
-{', '.join(cv['skills'])}
-
-## Uzmanlık Alanları:
-{', '.join(cv['expertise_domains'])}
-
-## Kullanıcı Profili - BİLMEDİĞİ / Ele Alamayacağı Alanlar:
-{', '.join(cv['non_expertise_domains'])}
+## CV Özeti (PDF'den Çekildi):
+{cv_summary}
 
 ## İşveren Mesajı:
 {employer_message}

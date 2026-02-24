@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Career Agent — Confidence Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: #0f1117;
+        color: #e0e0e0;
+        min-height: 100vh;
+        padding: 24px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        color: #7c8cf8;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      /* Üst satır: özet kartlar */
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+
+      .card {
+        background: #1a1d2e;
+        border: 1px solid #2a2d3e;
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .card-label {
+        font-size: 0.75rem;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 8px;
+      }
+
+      .card-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .card-value.good {
+        color: #4ade80;
+      }
+      .card-value.warn {
+        color: #facc15;
+      }
+      .card-value.bad {
+        color: #f87171;
+      }
+
+      /* Grafik alanları */
+      .charts-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+        margin-bottom: 28px;
+      }
+
+      .chart-card {
+        background: #1a1d2e;
+        border: 1px solid #2a2d3e;
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .chart-card h2 {
+        font-size: 0.9rem;
+        color: #aaa;
+        margin-bottom: 16px;
+      }
+
+      /* Kriter bazlı puan barları */
+      .criteria-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .criteria-item {
+        background: #1a1d2e;
+        border: 1px solid #2a2d3e;
+        border-radius: 10px;
+        padding: 16px;
+      }
+
+      .criteria-name {
+        font-size: 0.8rem;
+        color: #888;
+        margin-bottom: 10px;
+      }
+
+      .bar-container {
+        background: #2a2d3e;
+        border-radius: 6px;
+        height: 10px;
+        overflow: hidden;
+      }
+
+      .bar-fill {
+        height: 100%;
+        border-radius: 6px;
+        transition: width 0.6s ease;
+      }
+
+      .score-label {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #fff;
+        margin-top: 8px;
+      }
+
+      /* Log tablosu */
+      .log-card {
+        background: #1a1d2e;
+        border: 1px solid #2a2d3e;
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .log-card h2 {
+        font-size: 0.9rem;
+        color: #aaa;
+        margin-bottom: 16px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+      }
+
+      th {
+        text-align: left;
+        color: #666;
+        font-weight: 500;
+        padding: 8px 12px;
+        border-bottom: 1px solid #2a2d3e;
+      }
+
+      td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #1e2132;
+        color: #ccc;
+        max-width: 280px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-size: 0.72rem;
+        font-weight: 600;
+      }
+
+      .badge-green {
+        background: #14532d;
+        color: #4ade80;
+      }
+      .badge-yellow {
+        background: #422006;
+        color: #facc15;
+      }
+      .badge-red {
+        background: #450a0a;
+        color: #f87171;
+      }
+
+      .refresh-btn {
+        background: #7c8cf8;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 18px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        margin-left: auto;
+        display: block;
+        margin-bottom: 16px;
+      }
+
+      .refresh-btn:hover {
+        background: #6070e0;
+      }
+
+      .empty-state {
+        text-align: center;
+        color: #555;
+        padding: 40px;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🤖 Career Agent — Confidence Dashboard</h1>
+
+    <button class="refresh-btn" onclick="loadData()">🔄 Yenile</button>
+
+    <!-- Özet Kartlar -->
+    <div class="summary-grid">
+      <div class="card">
+        <div class="card-label">Toplam Etkileşim</div>
+        <div class="card-value" id="total-count">—</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Ortalama Puan</div>
+        <div class="card-value" id="avg-score">—</div>
+      </div>
+      <div class="card">
+        <div class="card-label">İnsan Müdahalesi</div>
+        <div class="card-value" id="human-count">—</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Son Puan</div>
+        <div class="card-value" id="last-score">—</div>
+      </div>
+    </div>
+
+    <!-- Grafikler -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h2>📈 Puan Geçmişi (Son 20 Etkileşim)</h2>
+        <canvas id="scoreHistory" height="80"></canvas>
+      </div>
+      <div class="chart-card">
+        <h2>🏷️ Mesaj Tipi Dağılımı</h2>
+        <canvas id="typeChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Son Yanıt Kriter Barları -->
+    <div class="card" style="margin-bottom: 20px">
+      <div class="card-label" style="margin-bottom: 16px">
+        Son Yanıt — Kriter Bazlı Puanlar
+      </div>
+      <div class="criteria-grid" id="criteria-bars">
+        <div class="empty-state">Henüz veri yok</div>
+      </div>
+    </div>
+
+    <!-- Log Tablosu -->
+    <div class="log-card">
+      <h2>📋 Son Etkileşimler</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Zaman</th>
+            <th>Gönderen</th>
+            <th>Mesaj Tipi</th>
+            <th>Puan</th>
+            <th>Deneme</th>
+            <th>Mesaj Önizleme</th>
+          </tr>
+        </thead>
+        <tbody id="log-table-body">
+          <tr>
+            <td colspan="6" class="empty-state">Yükleniyor...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      let scoreHistoryChart = null;
+      let typeChart = null;
+
+      const CRITERIA_LABELS = {
+        professional_tone: "Profesyonel Ton",
+        clarity: "Netlik",
+        completeness: "Eksiksizlik",
+        safety: "Güvenlik",
+        relevance: "Alaka",
+      };
+
+      function scoreColor(score, max = 10) {
+        const ratio = score / max;
+        if (ratio >= 0.7) return "#4ade80";
+        if (ratio >= 0.5) return "#facc15";
+        return "#f87171";
+      }
+
+      function badgeClass(score) {
+        if (score >= 7) return "badge-green";
+        if (score >= 5) return "badge-yellow";
+        return "badge-red";
+      }
+
+      function formatTime(ts) {
+        if (!ts) return "—";
+        const d = new Date(ts);
+        return d.toLocaleString("tr-TR", {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      async function loadData() {
+        try {
+          const res = await fetch("/logs");
+          const logs = await res.json();
+
+          if (!logs || logs.length === 0) {
+            document.getElementById("total-count").textContent = "0";
+            document.getElementById("avg-score").textContent = "—";
+            document.getElementById("human-count").textContent = "0";
+            document.getElementById("last-score").textContent = "—";
+            document.getElementById("log-table-body").innerHTML =
+              '<tr><td colspan="6" class="empty-state">Henüz etkileşim yok</td></tr>';
+            return;
+          }
+
+          // Sadece değerlendirme içeren logları filtrele
+          const evaluated = logs.filter((l) => l.evaluation);
+          const humanLogs = logs.filter(
+            (l) => l.action === "human_intervention_requested",
+          );
+
+          // ── Özet Kartlar ──
+          document.getElementById("total-count").textContent = logs.length;
+          document.getElementById("human-count").textContent = humanLogs.length;
+
+          if (evaluated.length > 0) {
+            const avg =
+              evaluated.reduce((s, l) => s + l.evaluation.total_score, 0) /
+              evaluated.length;
+            const avgEl = document.getElementById("avg-score");
+            avgEl.textContent = avg.toFixed(1);
+            avgEl.className =
+              "card-value " + (avg >= 7 ? "good" : avg >= 5 ? "warn" : "bad");
+
+            const last = evaluated[evaluated.length - 1].evaluation.total_score;
+            const lastEl = document.getElementById("last-score");
+            lastEl.textContent = last + "/10";
+            lastEl.className =
+              "card-value " + (last >= 7 ? "good" : last >= 5 ? "warn" : "bad");
+
+            // ── Kriter Barları (son yanıt) ──
+            const lastScores =
+              evaluated[evaluated.length - 1].evaluation.scores;
+            if (lastScores) {
+              const container = document.getElementById("criteria-bars");
+              container.innerHTML = "";
+              Object.entries(CRITERIA_LABELS).forEach(([key, label]) => {
+                const val = lastScores[key] ?? 0;
+                const pct = (val / 2) * 100;
+                const color = scoreColor(val, 2);
+                container.innerHTML += `
+                            <div class="criteria-item">
+                                <div class="criteria-name">${label}</div>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width:${pct}%; background:${color}"></div>
+                                </div>
+                                <div class="score-label" style="color:${color}">${val}/2</div>
+                            </div>`;
+              });
+            }
+          }
+
+          // ── Puan Geçmişi Grafiği ──
+          const last20 = evaluated.slice(-20);
+          const labels = last20.map((_, i) => `#${i + 1}`);
+          const scores = last20.map((l) => l.evaluation.total_score);
+
+          if (scoreHistoryChart) scoreHistoryChart.destroy();
+          scoreHistoryChart = new Chart(
+            document.getElementById("scoreHistory"),
+            {
+              type: "line",
+              data: {
+                labels,
+                datasets: [
+                  {
+                    label: "Evaluator Puanı",
+                    data: scores,
+                    borderColor: "#7c8cf8",
+                    backgroundColor: "rgba(124,140,248,0.1)",
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: scores.map((s) => scoreColor(s)),
+                    pointRadius: 5,
+                  },
+                ],
+              },
+              options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                  y: {
+                    min: 0,
+                    max: 10,
+                    ticks: { color: "#666" },
+                    grid: { color: "#1e2132" },
+                  },
+                  x: { ticks: { color: "#666" }, grid: { color: "#1e2132" } },
+                },
+              },
+            },
+          );
+
+          // ── Mesaj Tipi Dağılımı ──
+          const typeCounts = {};
+          logs.forEach((l) => {
+            const t = l.message_type || "unknown";
+            typeCounts[t] = (typeCounts[t] || 0) + 1;
+          });
+
+          if (typeChart) typeChart.destroy();
+          typeChart = new Chart(document.getElementById("typeChart"), {
+            type: "doughnut",
+            data: {
+              labels: Object.keys(typeCounts),
+              datasets: [
+                {
+                  data: Object.values(typeCounts),
+                  backgroundColor: [
+                    "#7c8cf8",
+                    "#4ade80",
+                    "#facc15",
+                    "#f87171",
+                    "#a78bfa",
+                    "#34d399",
+                  ],
+                },
+              ],
+            },
+            options: {
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: { color: "#888", font: { size: 11 }, padding: 12 },
+                },
+              },
+            },
+          });
+
+          // ── Log Tablosu ──
+          const tbody = document.getElementById("log-table-body");
+          const recent = [...logs].reverse().slice(0, 15);
+          tbody.innerHTML = recent
+            .map((l) => {
+              const score = l.evaluation ? l.evaluation.total_score : "—";
+              const badge = l.evaluation
+                ? `<span class="badge ${badgeClass(score)}">${score}/10</span>`
+                : `<span class="badge badge-yellow">insan</span>`;
+              const preview = (l.message || "").slice(0, 60) + "...";
+              return `
+                    <tr>
+                        <td>${formatTime(l.timestamp)}</td>
+                        <td>${l.sender || "—"}</td>
+                        <td>${l.message_type || l.action || "—"}</td>
+                        <td>${badge}</td>
+                        <td>${l.attempts || "—"}</td>
+                        <td title="${(l.message || "").replace(/"/g, "&quot;")}">${preview}</td>
+                    </tr>`;
+            })
+            .join("");
+        } catch (err) {
+          console.error("Veri yüklenemedi:", err);
+        }
+      }
+
+      // Sayfa açılınca yükle, her 30 saniyede otomatik yenile
+      loadData();
+      setInterval(loadData, 30000);
+    </script>
+  </body>
+</html>
