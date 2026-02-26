@@ -24,6 +24,8 @@ from rag.pdf_loader import get_vector_store
 # Lifespan — startup'ta CV'yi indexle
 # ---------------------------------------------------------------------------
 
+# Uygulama başladığında CV PDF'ini okuyup vektör veritabanına yükler;
+# uygulama kapandığında gerekli temizlik işlemlerini yapar.
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Indexes the CV on startup and cleans up on shutdown."""
@@ -55,6 +57,8 @@ app.add_middleware(
 )
 
 
+# Uygulamada yakalanmayan tüm hataları yakalar, terminale yazdırır
+# ve kullanıcıya detaylı bir 500 hata yanıtı döndürür.
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     """Logs all unhandled exceptions and returns a detailed 500 response."""
@@ -90,6 +94,8 @@ class HumanResponse(BaseModel):
 LOGS_PATH = os.path.join(os.path.dirname(__file__), "data", "logs.json")
 
 
+# Bir işveren mesajı işlendiğinde oluşan tüm bilgileri (yanıt, skor,
+# girişim sayısı vb.) zaman damgasıyla birlikte data/logs.json dosyasına kaydeder.
 def log_interaction(data: dict) -> None:
     """Saves all interactions to data/logs.json."""
     try:
@@ -110,6 +116,8 @@ def log_interaction(data: dict) -> None:
 # ---------------------------------------------------------------------------
 
 
+# İşveren mesajını alır ve tam ajan pipeline'ını çalıştırır:
+# bildirim → insan müdahalesi kontrolü → yanıt üretimi → değerlendirme (max 3 deneme) → kayıt.
 @app.post("/process-message")
 async def process_message(payload: EmployerMessage):
     """
@@ -216,6 +224,8 @@ async def process_message(payload: EmployerMessage):
     }
 
 
+# İnsan müdahalesi gerektiğinde kullanıcının yazdığı yanıtı alır,
+# logs.json'a kaydeder ve gönderilen yanıtı geri döndürür.
 @app.post("/submit-human-response")
 async def submit_human_response(payload: HumanResponse):
     """
@@ -240,6 +250,7 @@ async def submit_human_response(payload: HumanResponse):
     }
 
 
+# data/logs.json dosyasındaki tüm etkileşim kayıtlarını JSON olarak döndürür.
 @app.get("/logs")
 async def get_logs():
     """Returns all interaction logs."""
@@ -250,6 +261,7 @@ async def get_logs():
         return []
 
 
+# data/logs.json dosyasını sıfırlar; tüm kayıtları temizler.
 @app.delete("/logs")
 async def clear_logs():
     """Clears the log file."""
@@ -258,12 +270,14 @@ async def clear_logs():
     return {"status": "ok", "message": "Logs cleared."}
 
 
+# Sunucunun ayakta olup olmadığını kontrol etmek için basit bir sağlık endpoint'i sağlar.
 @app.get("/health")
 async def health():
     """Server health check."""
     return {"status": "ok", "agent": "Career Assistant v1.1"}
 
 
+# templates/dashboard.html dosyasını sunarak güven skoru görselleştirme panosunu açar.
 @app.get("/dashboard")
 async def dashboard():
     """Serves the confidence scoring dashboard."""
@@ -276,6 +290,8 @@ async def dashboard():
 # ---------------------------------------------------------------------------
 
 
+# Ana kullanıcı arayüzünü (templates/index.html) sunar;
+# dosya bulunamazsa basit bir yedek HTML sayfası döndürür.
 @app.get("/", response_class=HTMLResponse)
 async def root():
     """Serves the main UI."""

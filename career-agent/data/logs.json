@@ -94,5 +94,32 @@
     "category": "salary_negotiation",
     "reason": "The employer is inquiring about salary expectations, which indicates a negotiation context that may require human judgment and discussion.",
     "timestamp": "2026-02-24T22:44:27.455387"
+  },
+  {
+    "sender": "test",
+    "message": "isminiz ne",
+    "final_response": "Dear [Employer's Name],\n\nThank you for your message. I understand you are inquiring about my name. My name is Zeynep Yonca Özel. \n\nIf you have any additional questions or need further information regarding my background or experience, please feel free to let me know.\n\nBest regards,\n\nZeynep Yonca Özel  \nPhone: +90 545 320 13 52  \nEmail: ozelzeynepyonca@gmail.com  \nLinkedIn: www.linkedin.com/in/zeynep-yonca-özel-365456204",
+    "evaluation": {
+      "total_score": 9,
+      "scores": {
+        "professional_tone": 2,
+        "clarity": 2,
+        "completeness": 1,
+        "safety": 2,
+        "relevance": 2
+      },
+      "feedback": "The response maintains a professional tone and is clear and relevant. However, it does not fully address the employer's message, which is unclear and may not specifically ask for the name. Therefore, completeness is rated lower.",
+      "suggestions": "Consider asking for clarification on the employer's message to ensure a complete response.",
+      "approved": true
+    },
+    "message_type": "clarification",
+    "attempts": 2,
+    "detection": {
+      "requires_human": true,
+      "confidence_score": 0.0,
+      "reason": "The message is simply asking for the name of the individual and does not pertain to any specific situation that requires further analysis or intervention.",
+      "category": "none"
+    },
+    "timestamp": "2026-02-25T16:08:37.117782"
   }
 ]
